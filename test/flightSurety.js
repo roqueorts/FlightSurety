@@ -59,7 +59,7 @@ contract('Flight Surety Tests', async (accounts) => {
       let reverted = false;
       try 
       {
-          await config.flightSurety.setTestingMode(true);
+          await config.flightSurety.setTestingMode(true); // Cambiar
       }
       catch(e) {
           reverted = true;
