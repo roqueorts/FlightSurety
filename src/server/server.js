@@ -7,8 +7,10 @@ import express from 'express';
 let config = Config['localhost'];
 let web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws')));
 web3.eth.defaultAccount = web3.eth.accounts[0];
+
 let flightSuretyApp = new web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
 const TEST_ORACLES_COUNT = 10;
+console.log('Cuenta 0: ' + web3.eth.accounts[0]);
 // ARRANGE
 let getRegistrationFee = async () => {
   let result = await flightSuretyApp.methods.REGISTRATION_FEE().call();
@@ -28,7 +30,10 @@ let getGetMyIndexes = async (account) => {
   let result = await flightSuretyApp.methods.getMyIndexes().call({ from: account });
   return result.toString("binary");
 } 
-
+ console.log('pepepepe');
+ console.log(web3.eth.accounts[1]);
+// console.log(web3.eth.accounts[1]);
+// console.log(web3.eth.accounts[1]);
 
 ( async () => {
   const fee = await getRegistrationFee();
