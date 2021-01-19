@@ -35,8 +35,9 @@ let getGetMyIndexes = async (account) => {
   console.log('fee: '+ fee);
   for(let a=1; a<TEST_ORACLES_COUNT; a++) {      
     // 
+    console.log(web3.eth.accounts[a]);
     await  setRegisterOracle(web3.eth.accounts[a], fee);
-    let result = await getGetMyIndexes( web3.eth.accounts[a]);
+    // let result = await getGetMyIndexes( web3.eth.accounts[a]);
     //let result = await flightSuretyApp.methods.getMyIndexes().call({from: web3.eth.accounts[a]});
     // console.log('App:' + flightSuretyApp);
     // console.log(`Oracle Registrado : ${result[0]}, ${result[1]}, ${result[2]}`);
