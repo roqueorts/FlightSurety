@@ -56,8 +56,22 @@ export default class Contract {
         self.flightSuretyApp.methods
             .fetchFlightStatus(payload.airline, payload.flight, payload.timestamp)
             .send({ from: self.owner}, (error, result) => {
-                callback(error, payload);
+                // callback(error, payload);
             });
+        self.flightSuretyApp.events.FlightStatusInfo({
+                fromBlock: 0
+              },  function (error, event) {
+                if (error) console.log('Error recibido' + error)
+                console.log('EVENTOS' + event)
+                // payload.airline = event.returnValues.airline;
+                // payload.flight = event.returnValues.flight;
+                // payload.timestamp = event.returnValues.timestamp;
+                // payload.statusCode = event.returnValues.statusCode;
+                callback(error, payload);
+                // event.returnValues.firstAirline, event.returnValues.flight, event.returnValues.timestamp, event.returnValues.statusCode
+                
+              });
         
     }
+    
 }
