@@ -16,6 +16,12 @@ export default class Contract {
 
     initialize(callback) {
         this.web3.eth.getAccounts((error, accts) => {
+
+            // let result =   this.flightSuretyApp.methods.getMyIndexes().call({from: accts[1]})
+            //       .then(function(result){
+            //         console.log(`Oracle Registrado : ${result[0]}, ${result[1]}, ${result[2]}`);
+            //          });
+                     console.log('fdfdfdfd');
            
             this.owner = accts[0];
 
@@ -52,5 +58,6 @@ export default class Contract {
             .send({ from: self.owner}, (error, result) => {
                 callback(error, payload);
             });
+        
     }
 }

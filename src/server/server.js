@@ -24,6 +24,10 @@ let getGetMyIndexes = async (account) => {
   let result = await flightSuretyApp.methods.getMyIndexes().call({ from: account });
   return result.toString("binary");
 } 
+let getAccounts = async () => {
+  let result = await web3.eth.getAccounts();
+  return result.toString("binary");
+} 
 
 ( async () => {
   const accounts = await web3.eth.getAccounts();
@@ -32,30 +36,48 @@ let getGetMyIndexes = async (account) => {
   for(let a=1; a<TEST_ORACLES_COUNT; a++) {      
     // 
     console.log(accounts[a]);
-    await  setRegisterOracle(accounts[a], fee);
-    let result = await getGetMyIndexes(accounts[a]);
-   // let result =   flightSuretyApp.methods.getMyIndexes().call({from: accounts[a]});
+    // await  setRegisterOracle(accounts[a], fee);
+    // let result = await getGetMyIndexes(accounts[a]);
+    flightSuretyApp.methods.registerOracle().call({ from: accounts[a], value: fee }).then(function(resultado){
+      console.log(`Oracle Registrado : ${resultado[0]}, ${resultado[1]}, ${resultado[2]}`);
+      let result =   flightSuretyApp.methods.getMyIndexes().call({from: accounts[a]});
+      result.then(function(results){
+                 console.log(`Oracle Registrado : ${results[0]}, ${results[1]}, ${results[2]}`);
+                  });
+     
+       });
+  
     // console.log('App:' + flightSuretyApp);
     // console.log(`Oracle Registrado : ${result[0]}, ${result[1]}, ${result[2]}`);
    }
+   
 }
 
 )();
-// ACT
-for(let a=1; a<TEST_ORACLES_COUNT; a++) {      
- // 
- // await flightSuretyApp.methods.registerOracle().call({ from: web3.eth.accounts[a], value: fee2 });
- // let result = flightSuretyApp.methods.getMyIndexes().call({from: web3.eth.accounts[a]});
- // console.log('App:' + flightSuretyApp);
- // console.log(`Oracle Registrado : ${result[0]}, ${result[1]}, ${result[2]}`);
-}
 
 flightSuretyApp.events.OracleRequest({
-    fromBlock: 0
-  }, function (error, event) {
-    if (error) console.log(error)
-    console.log(event)
+  fromBlock: 0
+}, function (error, event) {
+  if (error) console.log(error)
+  console.log('eeee' + event.returnValues.flight)
+
+ // let accounts =  getAccounts();
+ web3.eth.getAccounts(function(err, res) {
+ for(let a=1; a<TEST_ORACLES_COUNT; a++) {  
+
+  // Get oracle information
+  // let result =  flightSuretyApp.methods.getMyIndexes().call({ from: res[a]});
+  // result.then(function(oracleIndexes){
+  //   console.log('Cuenta: ' + res[a]);
+  //   console.log('Indexes: ' + oracleIndexes);
+  // })
+    
+    
+ }
+
+})
 });
+
 
 const app = express();
 app.get('/api', (req, res) => {
