@@ -58,19 +58,28 @@ export default class Contract {
             .send({ from: self.owner}, (error, result) => {
                 // callback(error, payload);
             });
-        self.flightSuretyApp.events.FlightStatusInfo({
-                fromBlock: 0
-              },  function (error, event) {
-                if (error) console.log('Error recibido' + error)
-                console.log('EVENTOS' + event)
-                // payload.airline = event.returnValues.airline;
-                // payload.flight = event.returnValues.flight;
-                // payload.timestamp = event.returnValues.timestamp;
-                // payload.statusCode = event.returnValues.statusCode;
-                callback(error, payload);
-                // event.returnValues.firstAirline, event.returnValues.flight, event.returnValues.timestamp, event.returnValues.statusCode
+        // self.flightSuretyApp.events.FlightStatusInfo({
+        //         fromBlock: 0
+        //       },  function (error, event) {
+        //         if (error) console.log('Error recibido' + error)
+        //         console.log('EVENTOS' + event)
+        //         // payload.airline = event.returnValues.airline;
+        //         // payload.flight = event.returnValues.flight;
+        //         // payload.timestamp = event.returnValues.timestamp;
+        //         // payload.statusCode = event.returnValues.statusCode;
+        //         callback(error, payload);
+        //         // event.returnValues.firstAirline, event.returnValues.flight, event.returnValues.timestamp, event.returnValues.statusCode
                 
-              });
+        //       });
+
+        self.flightSuretyApp.getPastEvents('FlightStatusInfo', {
+          //  filter: {myIndexedParam: [20,23], myOtherIndexedParam: '0x123456789...'}, // Using an array means OR: e.g. 20 or 23
+         //   fromBlock: 0,
+          //  toBlock: 'latest'
+        }, function(error, events){ console.log(events); })
+        .then(function(events){
+            console.log(events) // same results as the optional callback above
+        });
         
     }
     
