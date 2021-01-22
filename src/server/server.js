@@ -42,12 +42,12 @@ let getGetMyIndexes = async (account) => {
     console.log(accounts[a]);
     // await  setRegisterOracle(accounts[a], fee);
     // let result = await getGetMyIndexes(accounts[a]);
-    flightSuretyApp.methods.registerOracle().call({ from: accounts[a], value: fee }).then(function(resultado){
-      console.log(`Oracle Registrado : ${resultado[0]}, ${resultado[1]}, ${resultado[2]}`);
-      // let result =   flightSuretyApp.methods.getMyIndexes().call({from: accounts[a]});
-      // result.then(function(results){
-      //            console.log(`Oracle Registrado : ${results[0]}, ${results[1]}, ${results[2]}`);
-      //             });
+    flightSuretyApp.methods.registerOracle().send({ from: accounts[a], value: fee, gas: '4712388', gasPrice: '100000000000' }).then(function(resultado){
+      // console.log(`Oracle Registrado : ${resultado[0]}, ${resultado[1]}, ${resultado[2]}`);
+      let result =   flightSuretyApp.methods.getMyIndexes().call({from: accounts[a]});
+      result.then(function(results){
+                 console.log(`Oracle Registrado : ${results[0]}, ${results[1]}, ${results[2]}`);
+                  });
      
        });
   
@@ -71,14 +71,17 @@ flightSuretyApp.events.OracleRequest({
   let index = event.returnValues.index;
  //let accounts =  await getAccounts();
  //console.log('Cuenta: ' + accounts[2]);
- let oracleIndexes = [0,1,2];// await getGetMyIndexes(accounts[2]);
+ //let oracleIndexes = await getGetMyIndexes(accounts[a]);
  web3.eth.getAccounts(function(err, accounts) {
- for(let a=1; a<TEST_ORACLES_COUNT; a++) { 
+  for(let a=1; a<TEST_ORACLES_COUNT; a++) {
+  flightSuretyApp.methods.getMyIndexes().call({ from: accounts[a] }).then(function(oracleIndexes){
+  
   //for(let idx=0;idx<3;idx++) {
 
     try {
       console.log('Airline: ' + event.returnValues.airline);
       // Submit a response...it will only be accepted if there is an Index match
+      if(index == oracleIndexes[0] || index ==oracleIndexes[1] || index ==oracleIndexes[2])
        flightSuretyApp.methods.submitOracleResponse(index, event.returnValues.airline, event.returnValues.flight, event.returnValues.timestamp, STATUS_CODE_LATE_AIRLINE).call({ from: accounts[a] });
 
     }
@@ -89,7 +92,9 @@ flightSuretyApp.events.OracleRequest({
 
   //}
 
-  }
+ });
+
+}
  });
 
 // Borrar
