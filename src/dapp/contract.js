@@ -7,12 +7,15 @@ export default class Contract {
 
         let config = Config[network];
         this.web3 = new Web3(new Web3.providers.HttpProvider(config.url));
+        //this.web3 = new Web3(new Web3.providers.WebsocketProvider(config.url.replace('http', 'ws'))); 
         this.flightSuretyApp = new this.web3.eth.Contract(FlightSuretyApp.abi, config.appAddress);
         this.initialize(callback);
         this.owner = null;
         this.airlines = [];
         this.passengers = [];
-       // this.fetchEvents();
+        
+
+        
     }
 
     initialize(callback) {
@@ -47,6 +50,8 @@ export default class Contract {
             .call({ from: self.owner}, callback);
     }
 
+    
+
     fetchFlightStatus(flight, callback) {
         let self = this;
         let payload = {
@@ -54,18 +59,43 @@ export default class Contract {
             flight: flight,
             timestamp: Math.floor(Date.now() / 1000)
         } 
+        console.log("Vuelo: " + payload.flight);
         self.flightSuretyApp.methods
             .fetchFlightStatus(payload.airline, payload.flight, payload.timestamp)
             .send({ from: self.owner}, (error, result) => {
                 // callback(error, payload);
                 console.log('Resultado: ', result);
-                self.flightSuretyApp.getPastEvents('FlightStatusInfo', {
-                    fromBlock: 0
-                }, function(error, events){ console.log(events); })
-                .then(function(events){
-                    console.log(events) // same results as the optional callback above
-                });
+                // this.fetchEvents();
+                
             });
+            self.flightSuretyApp.getPastEvents('FlightStatusInfo', {
+                fromBlock: 1
+            }, function(error, events){ console.log(events[0]); 
+            
+                payload.airline = events[0].returnValues.airline;
+                payload.flight = events[0].returnValues.flight;
+                payload.timestamp = events[0].returnValues.timestamp;
+                payload.status = events[0].returnValues.status;
+                callback(error, payload);
+            
+            })
+            .then(function(events){
+                console.log('EO'+ events) // same results as the optional callback above . allEvents
+            });
+// Events Listeners
+// self.flightSuretyApp.events.FlightStatusInfo({fromBlock: 0}, function (error, event) {
+//     console.log('Oracle event reported from processFlightStatus function of app contract')
+//     console.log(event);
+//     //console.log('Event Emitted = '+event.event);
+//     //console.log(event.returnValues.result);
+//     console.log(error,event);
+//     // console.log('Flight = '+event.returnValues.flight);
+//     // console.log('statusCode ='+event.returnValues.statusCode);
+//     let statusError = error;
+//     let statusResult = event;
+//     // callback(statusError, statusResult);
+// });
+
         // self.flightSuretyApp.events.FlightStatusInfo({
         //         fromBlock: 0
         //       },  function (error, event) {
@@ -86,6 +116,17 @@ export default class Contract {
           //  toBlock: 'latest'
         
     }
+
+    async fetchEvents (){
+
+       let result = await this.flightSuretyApp.getPastEvents('FlightStatusInfo', {
+                    fromBlock: 0
+                }, function(error, events){ console.log(events); })
+
+                console.log('Nuevo resultado: ' + result);
+                return result;
+
+    };
 
     // fetchEvents() {
     //     let self = this;

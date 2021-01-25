@@ -82,7 +82,7 @@ flightSuretyApp.events.OracleRequest({
       console.log('Airline: ' + event.returnValues.airline);
       // Submit a response...it will only be accepted if there is an Index match
       if(index == oracleIndexes[0] || index ==oracleIndexes[1] || index ==oracleIndexes[2])
-       flightSuretyApp.methods.submitOracleResponse(index, event.returnValues.airline, event.returnValues.flight, event.returnValues.timestamp, STATUS_CODE_LATE_AIRLINE).call({ from: accounts[a] });
+       flightSuretyApp.methods.submitOracleResponse(index, event.returnValues.airline, event.returnValues.flight, event.returnValues.timestamp, STATUS_CODE_LATE_AIRLINE).send({ from: accounts[a] });
 
     }
     catch(e) {
@@ -117,6 +117,13 @@ flightSuretyApp.events.OracleRequest({
 // },  function (error, event) {
 //   if (error) console.log(error)
 //   console.log('EVENTOS de' + event)
+// });
+// flightSuretyApp.events.FlightStatusInfo({
+//   fromBlock: 0
+// },  function (error, event) {
+//   if (error) console.log(error)
+//   console.log('eeee' + event)
+
 // });
 
 const app = express();
